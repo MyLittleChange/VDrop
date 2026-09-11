@@ -1,8 +1,11 @@
-# ThinkMorph — BAGEL Cross-View Spatial Reasoning
+# VDrop — Visual Thinking in Unified Multimodal Models for Cross-View Spatial Reasoning
 
-Code release for our study of **visual chain-of-thought (CoT) for cross-view indoor spatial
-reasoning** on top of **[BAGEL-7B-MoT](https://github.com/ByteDance-Seed/Bagel)**, a unified
-vision–language model that can *generate* images as part of its reasoning.
+Official code release for the **EMNLP 2026** (main conference) paper
+[***How and What to Imagine? Visual Thinking in Unified Multimodal Models for Cross-View Spatial Reasoning***](https://arxiv.org/abs/2605.27310).
+
+We study **visual chain-of-thought (CoT) for cross-view indoor spatial reasoning** on top of
+**[BAGEL-7B-MoT](https://github.com/ByteDance-Seed/Bagel)**, a unified vision–language model
+that can *generate* images as part of its reasoning.
 
 Given two camera views of the same indoor scene, the model answers multiple-choice questions
 about spatial relationships (anchor, counting, relative-distance, relative-direction, mapping,
@@ -10,8 +13,8 @@ point-matching). We fine-tune BAGEL under four *thinking modes* and study whethe
 model's self-generated intermediate image (the **bridge**) is actually *used* when it produces
 the answer.
 
-- 📄 Paper / website: [ThinkMorph](https://thinkmorph.github.io/) · [arXiv:2510.27492](https://arxiv.org/abs/2510.27492)
-- 🤗 Model: [ThinkMorph/ThinkMorph-7B](https://huggingface.co/ThinkMorph/ThinkMorph-7B) · Datasets: [ThinkMorph](https://huggingface.co/ThinkMorph)
+- 📄 Paper: [arXiv:2605.27310](https://arxiv.org/abs/2605.27310) · **EMNLP 2026** (main conference)
+- 🤗 Base model: [BAGEL-7B-MoT](https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT) · Training data: released on HuggingFace (see [§5 Data creation](#5-data-creation)). ThinkMorph-7B and Zebra-CoT are prior-work baselines we compare against.
 
 > This folder is a **curated, standalone extract** of the BAGEL-related code from our research
 > repository. It bundles the BAGEL model core plus everything needed to build training data,
@@ -56,8 +59,10 @@ representations, each a separate training recipe studied in the paper:
 ### Bridge-necessity training
 A central finding is that the `visual_only` model tends to **generate a bridge to satisfy the
 image objective but then ignore it**, reading the answer straight from `[V1, V2]` (a shortcut).
-We add **partial-view attention masking** during training that hides part of one input view from
-the answer's attention so the *only* path to cross-view information is *through the bridge*.
+We add **partial-view attention masking** during training — the method we call **VDrop** — that
+hides part of one input view from the answer's attention so the *only* path to cross-view
+information is *through the bridge*. (In the code and docs this is referred to interchangeably as
+*bridge-masking* / *bridge-necessity training*.)
 See [`docs/`](docs/) and [`SpatialUnderstanding/BRIDGE_MASKED_TRAINING_README.md`](SpatialUnderstanding/BRIDGE_MASKED_TRAINING_README.md).
 
 ---
@@ -66,7 +71,7 @@ See [`docs/`](docs/) and [`SpatialUnderstanding/BRIDGE_MASKED_TRAINING_README.md
 
 Accuracy (%) on **Setting A** (trained on Anchor / Counting / Rel-Dist / Rel-Dir; Map held out
 as OOD). LoRA SFT, r=32, α=64, 7K balanced samples. Full tables and all ablations are in the
-[paper](https://arxiv.org/abs/2510.27492).
+[paper](https://arxiv.org/abs/2605.27310).
 
 | Method | Anchor | Count. | Rel-Dist | Rel-Dir | MMSI | MindCube | STARE | BLINK |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -161,7 +166,7 @@ point `BAGEL_MODEL_PATH` (in `cluster.env`) at it.
 Training data is produced in three stages. **This release ships Stage 3 (SFT assembly).**
 Stages 1–2 (Blender/Infinigen rendering + Gemini scene annotation) are cluster- and
 Blender-specific and are *documented here* rather than shipped; the rendered scenes and the
-released SFT parquet/JSONL are on 🤗 [ThinkMorph](https://huggingface.co/ThinkMorph).
+released SFT parquet/JSONL are on 🤗 HuggingFace (dataset link to be added).
 
 | Stage | What | Where |
 | --- | --- | --- |
@@ -189,7 +194,7 @@ python create_omnispatial_sft_data.py            # real-world supplementary SFT
 Wire a new parquet directory into training by adding it to
 [`data/dataset_info.py`](data/dataset_info.py) under `spatial_reasoning` / `visual_only_thinking`.
 The full data-pipeline design (perturbed-negatives for the map task, corner-view camera geometry,
-point-matching annotation, coverage tables) is documented in the [paper](https://arxiv.org/abs/2510.27492).
+point-matching annotation, coverage tables) is documented in the [paper](https://arxiv.org/abs/2605.27310).
 
 ---
 
@@ -349,12 +354,14 @@ text+image data format and the bridge-necessity masking; the model architecture 
 `modeling/` is inherited from BAGEL. See BAGEL's [TRAIN.md](https://github.com/ByteDance-Seed/Bagel/blob/main/TRAIN.md).
 
 ```bibtex
-@article{gu2025thinkmorph,
-  title={ThinkMorph: Emergent Properties in Multimodal Interleaved Chain-of-Thought Reasoning},
-  author={Gu, Jiawei and Hao, Yunzhuo and Wang, Huichen Will and Li, Linjie and Shieh, Michael Qizhe and Choi, Yejin and Krishna, Ranjay and Cheng, Yu},
-  journal={arXiv preprint arXiv:2510.27492},
-  year={2025}
+@inproceedings{yang2026imagine,
+  title={How and What to Imagine? Visual Thinking in Unified Multimodal Models for Cross-View Spatial Reasoning},
+  author={Yang, Qian and others},
+  booktitle={Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year={2026},
+  note={arXiv:2605.27310}
 }
 ```
+<!-- TODO: replace "and others" with the full author list. -->
 
 See [`LICENSE`](LICENSE) for licensing terms.

@@ -1,0 +1,27 @@
+# caches / build
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# cluster config with real paths/keys (copy from cluster.env.example)
+cluster.env
+
+# experiment outputs / logs
+wandb/
+slurm_logs/
+*_output.txt
+*_error.txt
+*.log
+results/
+eval_results/
+generated_images/
+
+# large data / weights (host on HuggingFace instead)
+*.parquet
+*.safetensors
+*.tar
+*.tar.gz
+*.blend
+
+.DS_Store

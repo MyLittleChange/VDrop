@@ -1,0 +1,108 @@
+#!/bin/bash
+#SBATCH --job-name=bagel_map_mat_nt_lora9k
+#SBATCH --output=/path/to/ThinkMorph-BAGEL-release/SpatialUnderstanding/bagel/bagel_map_mix_balance_matterport_no_think_lora_9k_output.txt
+#SBATCH --error=/path/to/ThinkMorph-BAGEL-release/SpatialUnderstanding/bagel/bagel_map_mix_balance_matterport_no_think_lora_9k_error.txt
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:a100l:1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=32G
+#SBATCH --partition=unkillable
+
+#
+# BAGEL Map Verification Inference — 1 GPU on unkillable
+# Model: BAGEL_format_training_data_mix_balance_matterport_no_think_lora_9k
+# Think: false, Thinking mode: no_thinking
+# Usage:
+#   sbatch run_bagel_spatial_map_1gpu_mix_balance_matterport_no_think_lora_9k.sh
+#
+set -euo pipefail
+
+SCRIPT_DIR="/path/to/ThinkMorph-BAGEL-release"
+
+# ==================== Configuration ====================
+MODEL_PATH="${MODEL_PATH:-/path/to/scratch/VisualCoT/BAGEL_checkpoints/BAGEL_format_training_data_mix_balance_matterport_no_think_lora_9k}"
+
+DATA_FILE="${DATA_FILE:-/path/to/scratch/VisualCoT/spatial_collab_dataset/approved_dataset_map_questions_normalized.json}"
+
+OUTPUT_DIR="${OUTPUT_DIR:-/path/to/scratch/VisualCoT/BAGEL_format_training_data_mix_balance_matterport_no_think_lora_9k_map_questions_normalized}"
+
+GENERATED_IMAGES_DIR="${GENERATED_IMAGES_DIR:-${OUTPUT_DIR}/generated_images}"
+
+MAX_MEM_PER_GPU="${MAX_MEM_PER_GPU:-70GiB}"
+
+NUM_SHARDS="${NUM_SHARDS:-1}"
+
+SEED="${SEED:-42}"
+
+THINK="${THINK:-false}"
+THINKING_MODE="${THINKING_MODE:-no_thinking}"
+
+SHARD_IDX="${SHARD_IDX:-0}"
+
+# ==================== Print Configuration ====================
+echo "=============================================="
+echo "BAGEL Map Verification Inference (1-GPU unkillable, no_thinking)"
+echo "Model: BAGEL_format_training_data_mix_balance_matterport_no_think_lora_9k"
+echo "=============================================="
+echo "Configuration:"
+echo "  Model Path:      $MODEL_PATH"
+echo "  Data File:       $DATA_FILE"
+echo "  Output Dir:      $OUTPUT_DIR"
+echo "  Gen Images Dir:  $GENERATED_IMAGES_DIR"
+echo "  Max Mem/GPU:     $MAX_MEM_PER_GPU"
+echo "  Shard:           $SHARD_IDX/$NUM_SHARDS"
+echo "  Think Mode:      $THINK"
+echo "  Thinking Mode:   $THINKING_MODE"
+echo "  Seed:            $SEED"
+echo "=============================================="
+echo ""
+
+# ==================== Validation ====================
+if [[ ! -d "$MODEL_PATH" ]]; then
+    echo "ERROR: Model directory not found: $MODEL_PATH"
+    exit 1
+fi
+
+# ==================== Environment Setup ====================
+module load cuda/12.6.0
+unset ROCR_VISIBLE_DEVICES
+source /path/to/scratch/morph_env/bin/activate
+
+export PYTHONPATH="$SCRIPT_DIR:${PYTHONPATH:-}"
+
+echo "GPU Information:"
+nvidia-smi --query-gpu=index,name,memory.total --format=csv
+echo ""
+
+mkdir -p "$OUTPUT_DIR"
+
+# ==================== Build flags ====================
+THINK_FLAG=""
+if [[ "$THINK" == "false" ]]; then
+    THINK_FLAG="--no_think"
+fi
+
+GENERATED_IMAGES_FLAG=""
+if [[ -n "$GENERATED_IMAGES_DIR" ]]; then
+    GENERATED_IMAGES_FLAG="--generated_images_dir $GENERATED_IMAGES_DIR"
+fi
+
+OUTPUT_FILE="${OUTPUT_DIR}/inference_results_bagel_map_shard${SHARD_IDX}.json"
+
+echo "Launching shard ${SHARD_IDX}/${NUM_SHARDS} -> ${OUTPUT_FILE}"
+
+python3 "${SCRIPT_DIR}/SpatialUnderstanding/eval/spatial/run_inference_bagel_map.py" \
+    --model_path "$MODEL_PATH" \
+    --data_file "$DATA_FILE" \
+    --output_file "$OUTPUT_FILE" \
+    --max_mem_per_gpu "$MAX_MEM_PER_GPU" \
+    --shard "${SHARD_IDX}/${NUM_SHARDS}" \
+    --random_seed "$SEED" \
+    --thinking_mode "$THINKING_MODE" \
+    $THINK_FLAG \
+    $GENERATED_IMAGES_FLAG
+
+echo ""
+echo "=============================================="
+echo "Done. Results saved to: $OUTPUT_DIR"
+echo "=============================================="

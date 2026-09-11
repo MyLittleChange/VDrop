@@ -1,0 +1,15 @@
+visual_only_thinking:
+  dataset_names:
+  - training_data_mix_all_rotation_balance
+  image_transform_args:
+    image_stride: 16
+    max_image_size: 1024
+    min_image_size: 512
+  vit_image_transform_args:
+    image_stride: 14
+    max_image_size: 518
+    min_image_size: 224
+  is_mandatory: True
+  num_used_data:
+  - 9223
+  weight: 1

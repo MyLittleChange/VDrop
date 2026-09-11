@@ -14,7 +14,7 @@ model's self-generated intermediate image (the **bridge**) is actually *used* wh
 the answer.
 
 - 📄 Paper: [arXiv:2605.27310](https://arxiv.org/abs/2605.27310) · **EMNLP 2026** (main conference)
-- 🤗 Base model: [BAGEL-7B-MoT](https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT) · Training data: released on HuggingFace (see [§5 Data creation](#5-data-creation)). ThinkMorph-7B and Zebra-CoT are prior-work baselines we compare against.
+- 🤗 Base model: [BAGEL-7B-MoT](https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT) · Training data: [QianYangMILA/vdrop-crossview-8k](https://huggingface.co/datasets/QianYangMILA/vdrop-crossview-8k). ThinkMorph-7B and Zebra-CoT are prior-work baselines we compare against.
 
 > This folder is a **curated, standalone extract** of the BAGEL-related code from our research
 > repository. It bundles the BAGEL model core plus everything needed to build training data,
@@ -166,7 +166,7 @@ point `BAGEL_MODEL_PATH` (in `cluster.env`) at it.
 Training data is produced in three stages. **This release ships Stage 3 (SFT assembly).**
 Stages 1–2 (Blender/Infinigen rendering + Gemini scene annotation) are cluster- and
 Blender-specific and are *documented here* rather than shipped; the rendered scenes and the
-released SFT parquet/JSONL are on 🤗 HuggingFace (dataset link to be added).
+released SFT parquet/JSONL are on 🤗 [QianYangMILA/vdrop-crossview-8k](https://huggingface.co/datasets/QianYangMILA/vdrop-crossview-8k).
 
 | Stage | What | Where |
 | --- | --- | --- |
@@ -361,6 +361,5 @@ text+image data format and the bridge-necessity masking; the model architecture 
   year={2026}
 }
 ```
-<!-- TODO: replace "and others" with the full author list. -->
 
 See [`LICENSE`](LICENSE) for licensing terms.

@@ -354,12 +354,11 @@ text+image data format and the bridge-necessity masking; the model architecture 
 `modeling/` is inherited from BAGEL. See BAGEL's [TRAIN.md](https://github.com/ByteDance-Seed/Bagel/blob/main/TRAIN.md).
 
 ```bibtex
-@inproceedings{yang2026imagine,
+@article{yang2026and,
   title={How and What to Imagine? Visual Thinking in Unified Multimodal Models for Cross-View Spatial Reasoning},
-  author={Yang, Qian and others},
-  booktitle={Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
-  year={2026},
-  note={arXiv:2605.27310}
+  author={Yang, Qian and Sikarwar, Ankur and Le, Huy and Zhang, Le and Shi, Zhuan and Taslakian, Perouz and Agrawal, Aishwarya},
+  journal={arXiv preprint arXiv:2605.27310},
+  year={2026}
 }
 ```
 <!-- TODO: replace "and others" with the full author list. -->

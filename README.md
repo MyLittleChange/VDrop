@@ -13,7 +13,7 @@ point-matching). We fine-tune BAGEL under four *thinking modes* and study whethe
 model's self-generated intermediate image (the **bridge**) is actually *used* when it produces
 the answer.
 
-- 📄 Paper: [arXiv:2605.27310](https://arxiv.org/abs/2605.27310) · **EMNLP 2026** (main conference)
+- 📄 Paper: [arXiv:2605.27310](https://arxiv.org/abs/2605.27310) · **EMNLP 2026** (main conference) · 🌐 [Project page](https://mylittlechange.github.io/vdrop/)
 - 🤗 Base model: [BAGEL-7B-MoT](https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT) · Training data: [QianYangMILA/vdrop-crossview-8k](https://huggingface.co/datasets/QianYangMILA/vdrop-crossview-8k). ThinkMorph-7B and Zebra-CoT are prior-work baselines we compare against.
 
 > This folder is a **curated, standalone extract** of the BAGEL-related code from our research
